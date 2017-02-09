@@ -29,6 +29,13 @@
     
     NSLog(@"sncsjdcnd");
     
+    
+    NSLog(@"");
+    NSLog(@"");
+    NSLog(@"");
+    NSLog(@"");
+    
+    
 //    HTTouchClearView *clearView2 = [[HTTouchClearView alloc]initWithFrame:self.view.bounds];
 //    clearView2.imageUrl = @"http://img.popo.cn/uploadfile/2016/1212/1481509601933756.jpg";
 //    clearView2.ClearSize = CGSizeMake(150, 150);
