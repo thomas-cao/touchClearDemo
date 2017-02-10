@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF36DB591E4C55AB00753AEA /* pictureViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CF36DB581E4C55AB00753AEA /* pictureViewCell.m */; };
 		CF5B46941E139DCB00881E71 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5B46931E139DCB00881E71 /* main.m */; };
 		CF5B46971E139DCB00881E71 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5B46961E139DCB00881E71 /* AppDelegate.m */; };
 		CF5B469A1E139DCB00881E71 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5B46991E139DCB00881E71 /* ViewController.m */; };
@@ -52,6 +53,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF36DB571E4C55AB00753AEA /* pictureViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pictureViewCell.h; sourceTree = "<group>"; };
+		CF36DB581E4C55AB00753AEA /* pictureViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = pictureViewCell.m; sourceTree = "<group>"; };
 		CF5B468F1E139DCB00881E71 /* touchClearDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = touchClearDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF5B46931E139DCB00881E71 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CF5B46951E139DCB00881E71 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -159,6 +162,8 @@
 				CF5B46961E139DCB00881E71 /* AppDelegate.m */,
 				CF5B46981E139DCB00881E71 /* ViewController.h */,
 				CF5B46991E139DCB00881E71 /* ViewController.m */,
+				CF36DB571E4C55AB00753AEA /* pictureViewCell.h */,
+				CF36DB581E4C55AB00753AEA /* pictureViewCell.m */,
 				CF5B469B1E139DCB00881E71 /* Main.storyboard */,
 				CF5B469E1E139DCB00881E71 /* Assets.xcassets */,
 				CF5B46A01E139DCB00881E71 /* LaunchScreen.storyboard */,
@@ -397,6 +402,7 @@
 				CF5B46F21E139ED000881E71 /* SDWebImageDownloaderOperation.m in Sources */,
 				CF5B46F61E139ED000881E71 /* UIImage+GIF.m in Sources */,
 				CF5B46EF1E139ED000881E71 /* SDWebImageCompat.m in Sources */,
+				CF36DB591E4C55AB00753AEA /* pictureViewCell.m in Sources */,
 				CF5B46ED1E139ED000881E71 /* NSData+ImageContentType.m in Sources */,
 				CF5B46CC1E139DFC00881E71 /* HTTouchClearView.m in Sources */,
 				CF5B46941E139DCB00881E71 /* main.m in Sources */,

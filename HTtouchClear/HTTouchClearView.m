@@ -28,6 +28,8 @@ static NSInteger const touchSize = 150;
 @property (nonatomic, strong) UIImage *matterImage;
 /** 记录缩放 */
 @property (nonatomic, assign) BOOL zoomScale;
+@property (nonatomic, assign) CGFloat offset;
+@property (nonatomic, strong) UIActivityIndicatorView *activityView;
 @end
 
 @implementation HTTouchClearView
@@ -37,20 +39,37 @@ static NSInteger const touchSize = 150;
     return [[self alloc]init];
 }
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame]) {
+       
+        [self addSubview:self.activityView];
+        
+    }
+    return self;
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
     self.contentView.frame = self.bounds;
-    self.imageView.frame = self.bounds;
-    self.showImageView.frame = self.imageView.bounds;
+        [self setImagePosition:self.matterImage];
+    
+    self.activityView.center = self.center;
     
 }
 
 - (void)setImageUrl:(NSString *)imageUrl
 {
     _imageUrl = [imageUrl copy];
+    [self bringSubviewToFront:_activityView];
+
+    [self.activityView startAnimating];
     [self.imageView sd_setImageWithURL:[NSURL URLWithString:imageUrl] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+        [self.activityView stopAnimating];
         if (!error) {
+            
+            
             [self setImageBurl:image radius:self.FuzzyDegree];
         }
     }];
@@ -74,14 +93,55 @@ static NSInteger const touchSize = 150;
     
 }
 
+#pragma mark - 计算图片尺寸
+- (void)setImagePosition:(UIImage *)image
+{
+    if (image.size.width != 0 && image.size.height != 0) {
+        // 获取图片的显示尺寸
+        CGFloat width = self.width;
+        CGFloat scale = width / image.size.width;
+        CGFloat imgHeight = image.size.height * scale;
+        // 设置imageView的frame
+        self.imageView.frame = CGRectMake(0, 0, width, imgHeight);
+        // 判断图片类型
+        CGFloat supheight = self.height;
+        if (imgHeight < supheight)
+        {
+            CGFloat offset = (supheight - imgHeight) * 0.5;
+            self.offset = offset;
+            self.contentView.contentInset = UIEdgeInsetsMake(offset, 0, offset, 0);
+        }else
+        {
+//            self.contentView.contentSize = CGSizeMake(width, imgHeight);
+            self.imageView.frame = self.contentView.bounds;
+        }
+        self.showImageView.frame = self.imageView.bounds;
+    }
+    
+}
+
+#pragma mark - 重置控件
+- (void)resetContentView
+{
+    self.contentView.contentInset = UIEdgeInsetsZero;
+    self.contentView.contentSize = CGSizeZero;
+    self.contentView.contentOffset = CGPointZero;
+    self.imageView.transform = CGAffineTransformIdentity;
+
+}
+
+
 #pragma mark  - 处理模糊
 - (void)setImageBurl:(UIImage *)image radius:(CGFloat)dius
 {
+    if(!image)return;
+    [self resetContentView];
     self.matterImage = image;
-//    [self changeImageFrameWithImage:image];
-    
+    [self setImagePosition:image];
     CGFloat radiusNum = dius ? dius : radius;
     self.imageView.image = [image bluredImageWithRadius:radiusNum];
+    
+    self.contentView.pinchGestureRecognizer.enabled = NO;
     
 }
 
@@ -95,34 +155,16 @@ static NSInteger const touchSize = 150;
 }
 
 
-- (void)changeImageFrameWithImage:(UIImage *)image
-{
-    CGFloat superWidth = self.width;
-    CGFloat superHeight = self.height;
-    CGSize newSize = image.size;
-    if (newSize.width > superWidth) {
-        float ratio = superWidth / newSize.width;
-        newSize.width = superWidth;
-        newSize.height = floorf(newSize.height * ratio);
-    }else if (newSize.height > superHeight)
-    {
-        float ratio = superHeight / newSize.height;
-        newSize.height = superHeight;
-        newSize.width = floorf(newSize.width * ratio);
-    }
-    [self.imageView setFrame:CGRectMake(0, 0, newSize.width, newSize.height)];
-    self.imageView.center = CGPointMake(self.contentView.width / 2.0, self.contentView.height / 2.0);
-    self.showImageView.frame = self.imageView.frame;
-    self.showImageView.center = self.imageView.center;
-
-}
-
 - (void)scaleWithImage:(UITapGestureRecognizer *)tap
 {
+//    CGSize touchSize = self.touchView.frame.size;
+    
     CGPoint touchPoint = [tap locationInView:self.imageView];
     if (self.contentView.zoomScale != self.contentView.minimumZoomScale) {
         [self.contentView setZoomScale:self.contentView.minimumZoomScale animated:YES];
         self.zoomScale = NO;
+        
+//        [self setClearSize:CGSizeMake(touchSize.width * 2.0, touchSize.height * 2.0)];
     }else
     {
         CGFloat newScale = ((self.contentView.maximumZoomScale + self.contentView.minimumZoomScale) / 2 );
@@ -130,6 +172,7 @@ static NSInteger const touchSize = 150;
         CGFloat scaleY = self.height / newScale;
         [self.contentView zoomToRect:CGRectMake(touchPoint.x - scaleX / 2, (touchPoint.y - scaleY / 2), scaleX, scaleY) animated:YES];
         self.zoomScale = YES;
+//         [self setClearSize:CGSizeMake(touchSize.width / 2.0, touchSize.height / 2.0)];
     }
     
 }
@@ -141,7 +184,7 @@ static NSInteger const touchSize = 150;
         
         self.touchView.center = CGPointMake(touchPoint.x, touchPoint.y - 45);
         CGFloat contentW = self.zoomScale ? self.contentView.width : self.imageView.width;
-        CGFloat contentH = self.zoomScale ? self.contentView.height : self.imageView.height;
+        CGFloat contentH = self.zoomScale ? (self.contentView.height - (self.offset * 2)) : self.imageView.height;
         
         CGFloat showImageX = (self.touchView.width * 0.5) + (contentW  * 0.5) - self.touchView.center.x;
         CGFloat showImageY = (self.touchView.height * 0.5) + (contentH * 0.5) - self.touchView.center.y;
@@ -170,24 +213,15 @@ static NSInteger const touchSize = 150;
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
-{
-    CGRect newRect = self.imageView.frame;
-    if (newRect.size.width < self.width) {
-        newRect.origin.x = floorf((self.width - newRect.size.width) / 2.0);
-    }else
-    {
-        newRect.origin.x = 0;
-    }
-    if (newRect.size.height < self.height) {
-        
-        newRect.origin.y = floorf((self.height - newRect.size.height) / 2.0);
-    }else
-    {
-        newRect.origin.y = 0;
-    }
-    if (!CGRectEqualToRect(self.imageView.frame, newRect)) {
-        self.imageView.frame = newRect;
-    }
+{    
+    CGFloat offsetX = (scrollView.width - self.imageView.width) * 0.5;
+    offsetX = (offsetX < 0) ? 0 : offsetX;
+    
+    CGFloat offsetY = (scrollView.height - self.imageView.height) * 0.5;
+    offsetY = (offsetY < 0) ? 0 : offsetY;
+    
+    scrollView.contentInset = UIEdgeInsetsMake(offsetY, offsetX, offsetY, offsetX);
+   
 }
 
 #pragma mark - lazy
@@ -200,8 +234,8 @@ static NSInteger const touchSize = 150;
         _contentView.zoomScale = 1.0;
         _contentView.delegate = self;
         _contentView.backgroundColor = [UIColor blackColor];
-        _contentView.showsHorizontalScrollIndicator=NO;
-        _contentView.showsVerticalScrollIndicator=NO;
+        _contentView.showsHorizontalScrollIndicator = NO;
+        _contentView.showsVerticalScrollIndicator = NO;
         [self addSubview:_contentView];
     }
     return _contentView;
@@ -246,5 +280,13 @@ static NSInteger const touchSize = 150;
         _showImageView.contentMode = UIViewContentModeScaleAspectFit;
     }
     return _showImageView;
+}
+
+- (UIActivityIndicatorView *)activityView
+{
+    if (!_activityView) {
+        _activityView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    }
+    return  _activityView;
 }
 @end
