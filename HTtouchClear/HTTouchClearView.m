@@ -189,7 +189,7 @@ static NSInteger const touchSize = 150;
         CGFloat showImageX = (self.touchView.width * 0.5) + (contentW  * 0.5) - self.touchView.center.x;
         CGFloat showImageY = (self.touchView.height * 0.5) + (contentH * 0.5) - self.touchView.center.y;
         self.showImageView.center = CGPointMake(showImageX, showImageY);
-        [self.imageView addSubview:self.touchView];
+        self.touchView.hidden = NO;
         self.showImageView.image = self.matterImage;
         if ([self.delegate respondsToSelector:@selector(toucClearView: touchPiontDidChange:)]) {
             [self.delegate toucClearView:self touchPiontDidChange:touchPoint];
@@ -200,7 +200,7 @@ static NSInteger const touchSize = 150;
         if ([self.delegate respondsToSelector:@selector(touchClearView:touchEnd:)]) {
             [self.delegate touchClearView:self touchEnd:touchPoint];
         }
-        [self.touchView removeFromSuperview];
+        self.touchView.hidden = YES;
         
     }
     
@@ -253,6 +253,7 @@ static NSInteger const touchSize = 150;
         [_imageView addGestureRecognizer:longPre];
         tap.numberOfTapsRequired = 2;
         [_imageView addGestureRecognizer:tap];
+        [_imageView addSubview:self.touchView];
         [self.contentView addSubview:_imageView];
     }
     return _imageView;
@@ -268,6 +269,7 @@ static NSInteger const touchSize = 150;
         imageMasLayer.contents = (__bridge id)[UIImage imageNamed:@"patternFinnal"].CGImage;
         imageMasLayer.frame = _touchView.bounds;
         _touchView.layer.mask = imageMasLayer;
+        _touchView.hidden = YES;
         
     }
    return  _touchView;
