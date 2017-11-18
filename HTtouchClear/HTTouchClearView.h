@@ -2,8 +2,8 @@
 //  HTTouchClearView.h
 
 //
-//  Created by emppu－cao on 16/12/27.
-//  Copyright © 2016年 emppu－cao. All rights reserved.
+//  Created by 魏小庄 on 16/12/27.
+//  Copyright © 2016年 魏小庄. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

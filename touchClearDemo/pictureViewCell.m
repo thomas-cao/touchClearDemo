@@ -2,8 +2,8 @@
 //  pictureViewCell.m
 //  touchClearDemo
 //
-//  Created by emppu－cao on 17/2/9.
-//  Copyright © 2017年 emppu－cao. All rights reserved.
+//  Created by 魏小庄 on 17/2/9.
+//  Copyright © 2017年 魏小庄. All rights reserved.
 //
 
 #import "pictureViewCell.h"
