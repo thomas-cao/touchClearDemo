@@ -20,15 +20,13 @@ static NSInteger const touchSize = 150;
 @property (nonatomic, strong) UIScrollView *contentView;
 /** 展示的图片 */
 @property (nonatomic, strong) UIImageView *imageView;
-/** 显示清晰 */
-@property (nonatomic, strong) UIView *touchView;
 /** 显示的图片 */
 @property (nonatomic, strong) UIImageView *showImageView;
 /** 图片 */
 @property (nonatomic, strong) UIImage *matterImage;
-/** 记录缩放 */
-@property (nonatomic, assign) BOOL zoomScale;
-@property (nonatomic, assign) CGFloat offset;
+/** 保存已经模糊化的image */
+@property (nonatomic, strong) NSMutableDictionary *bluredImages;
+@property (nonatomic, weak) CALayer *imageMaskLayer;
 @property (nonatomic, strong) UIActivityIndicatorView *activityView;
 @end
 
@@ -42,9 +40,9 @@ static NSInteger const touchSize = 150;
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-       
         [self addSubview:self.activityView];
-        
+        [self.contentView addSubview:self.imageView];
+        [self.imageView addSubview:self.showImageView];
     }
     return self;
 }
@@ -68,9 +66,7 @@ static NSInteger const touchSize = 150;
     [self.imageView sd_setImageWithURL:[NSURL URLWithString:imageUrl] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         [self.activityView stopAnimating];
         if (!error) {
-            
-            
-            [self setImageBurl:image radius:self.FuzzyDegree];
+            [self setImageBurl:image imageName:self.imageName imagePath:self.imageUrl radius:self.FuzzyDegree];
         }
     }];
 }
@@ -79,16 +75,13 @@ static NSInteger const touchSize = 150;
 {
     _imageName = [imageName copy];
     UIImage *image = [UIImage imageNamed:imageName];
-    [self setImageBurl:image radius:self.FuzzyDegree];
-
+    [self setImageBurl:image imageName:self.imageName imagePath:self.imageUrl radius:self.FuzzyDegree];
 }
 
 - (void)setClearSize:(CGSize )ClearSize
 {
     if (ClearSize.width && ClearSize.height) {
-        
-        self.touchView.frame = CGRectMake(0, 0, ClearSize.width, ClearSize.height);
-        self.touchView.layer.mask.frame = self.touchView.bounds;
+        self.imageMaskLayer.frame = CGRectMake(0, 0, ClearSize.width, ClearSize.height);
     }
     
 }
@@ -108,11 +101,9 @@ static NSInteger const touchSize = 150;
         if (imgHeight < supheight)
         {
             CGFloat offset = (supheight - imgHeight) * 0.5;
-            self.offset = offset;
             self.contentView.contentInset = UIEdgeInsetsMake(offset, 0, offset, 0);
         }else
         {
-//            self.contentView.contentSize = CGSizeMake(width, imgHeight);
             self.imageView.frame = self.contentView.bounds;
         }
         self.showImageView.frame = self.imageView.bounds;
@@ -130,19 +121,26 @@ static NSInteger const touchSize = 150;
 
 }
 
-
 #pragma mark  - 处理模糊
-- (void)setImageBurl:(UIImage *)image radius:(CGFloat)dius
+- (void)setImageBurl:(UIImage *)image imageName:(NSString *)imageName imagePath:(NSString *)path radius:(CGFloat)dius
 {
     if(!image)return;
+    
+    NSString *imageKey = imageName.length ? imageName : path;
     [self resetContentView];
+    self.showImageView.image = image;
     self.matterImage = image;
     [self setImagePosition:image];
+    // 如果已经模糊，直接使用，避免重复模糊
+    if ([self.bluredImages valueForKey:imageKey]) {
+        self.imageView.image = [self.bluredImages valueForKey:imageKey];
+        return;
+    }
     CGFloat radiusNum = dius ? dius : radius;
-    self.imageView.image = [image bluredImageWithRadius:radiusNum];
-    
-    self.contentView.pinchGestureRecognizer.enabled = NO;
-    
+    UIImage *bluredImage = [image bluredImageWithRadius:radiusNum];
+    [self.bluredImages setValue:bluredImage forKey:imageKey];
+    self.imageView.image = bluredImage;
+
 }
 
 - (void)setFuzzyDegree:(CGFloat)FuzzyDegree
@@ -150,31 +148,23 @@ static NSInteger const touchSize = 150;
     _FuzzyDegree = FuzzyDegree;
     if (FuzzyDegree)
     {
-        [self setImageBurl:self.imageView.image radius:FuzzyDegree];
+        [self setImageBurl:self.imageView.image imageName:self.imageName imagePath:self.imageUrl radius:FuzzyDegree];
     }
 }
 
 
 - (void)scaleWithImage:(UITapGestureRecognizer *)tap
 {
-//    CGSize touchSize = self.touchView.frame.size;
-    
     CGPoint touchPoint = [tap locationInView:self.imageView];
     if (self.contentView.zoomScale != self.contentView.minimumZoomScale) {
         [self.contentView setZoomScale:self.contentView.minimumZoomScale animated:YES];
-        self.zoomScale = NO;
-        
-//        [self setClearSize:CGSizeMake(touchSize.width * 2.0, touchSize.height * 2.0)];
     }else
     {
         CGFloat newScale = ((self.contentView.maximumZoomScale + self.contentView.minimumZoomScale) / 2 );
         CGFloat scaleX = self.width / newScale;
         CGFloat scaleY = self.height / newScale;
         [self.contentView zoomToRect:CGRectMake(touchPoint.x - scaleX / 2, (touchPoint.y - scaleY / 2), scaleX, scaleY) animated:YES];
-        self.zoomScale = YES;
-//         [self setClearSize:CGSizeMake(touchSize.width / 2.0, touchSize.height / 2.0)];
     }
-    
 }
 
 - (void)longGesture:(UILongPressGestureRecognizer *)pre
@@ -182,15 +172,12 @@ static NSInteger const touchSize = 150;
     CGPoint touchPoint = [pre locationInView:self.imageView];
     if (pre.state == UIGestureRecognizerStateBegan || pre.state == UIGestureRecognizerStateChanged) {
         
-        self.touchView.center = CGPointMake(touchPoint.x, touchPoint.y - 45);
-        CGFloat contentW = self.zoomScale ? self.contentView.width : self.imageView.width;
-        CGFloat contentH = self.zoomScale ? (self.contentView.height - (self.offset * 2)) : self.imageView.height;
-        
-        CGFloat showImageX = (self.touchView.width * 0.5) + (contentW  * 0.5) - self.touchView.center.x;
-        CGFloat showImageY = (self.touchView.height * 0.5) + (contentH * 0.5) - self.touchView.center.y;
-        self.showImageView.center = CGPointMake(showImageX, showImageY);
-        self.touchView.hidden = NO;
+        self.imageMaskLayer.hidden = NO;
         self.showImageView.image = self.matterImage;
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        self.imageMaskLayer.position = CGPointMake(touchPoint.x, touchPoint.y - 50);
+        [CATransaction commit];
         if ([self.delegate respondsToSelector:@selector(toucClearView: touchPiontDidChange:)]) {
             [self.delegate toucClearView:self touchPiontDidChange:touchPoint];
         }
@@ -200,10 +187,9 @@ static NSInteger const touchSize = 150;
         if ([self.delegate respondsToSelector:@selector(touchClearView:touchEnd:)]) {
             [self.delegate touchClearView:self touchEnd:touchPoint];
         }
-        self.touchView.hidden = YES;
+        self.imageMaskLayer.hidden = YES;
         
     }
-    
 
 }
 
@@ -253,26 +239,8 @@ static NSInteger const touchSize = 150;
         [_imageView addGestureRecognizer:longPre];
         tap.numberOfTapsRequired = 2;
         [_imageView addGestureRecognizer:tap];
-        [_imageView addSubview:self.touchView];
-        [self.contentView addSubview:_imageView];
     }
     return _imageView;
-}
-
-- (UIView *)touchView
-{
-    if (!_touchView) {
-        _touchView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, touchSize, touchSize)];
-        _touchView.clipsToBounds = YES;
-        [_touchView addSubview:self.showImageView];
-        CALayer *imageMasLayer = [CALayer layer];
-        imageMasLayer.contents = (__bridge id)[UIImage imageNamed:@"patternFinnal"].CGImage;
-        imageMasLayer.frame = _touchView.bounds;
-        _touchView.layer.mask = imageMasLayer;
-        _touchView.hidden = YES;
-        
-    }
-   return  _touchView;
 }
 
 - (UIImageView *)showImageView
@@ -280,8 +248,23 @@ static NSInteger const touchSize = 150;
     if (!_showImageView) {
         _showImageView = [[UIImageView alloc]init];
         _showImageView.contentMode = UIViewContentModeScaleAspectFit;
+        _showImageView.userInteractionEnabled = NO;
+        CALayer *imageMaskLayer = [CALayer layer];
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"patternFinnal" ofType:@".png"];
+        UIImage *displayerImage = [UIImage imageWithContentsOfFile:path];
+        imageMaskLayer.contents = (__bridge id)displayerImage.CGImage;
+        imageMaskLayer.frame = CGRectMake(0, 0, touchSize, touchSize);
+        imageMaskLayer.hidden = YES;
+        self.imageMaskLayer = imageMaskLayer;
+        _showImageView.layer.mask = imageMaskLayer;
     }
     return _showImageView;
+}
+- (NSMutableDictionary *)bluredImages{
+    if (!_bluredImages) {
+        _bluredImages = [NSMutableDictionary dictionaryWithCapacity:0];
+    }
+    return _bluredImages;
 }
 
 - (UIActivityIndicatorView *)activityView

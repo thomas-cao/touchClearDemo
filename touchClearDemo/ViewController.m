@@ -42,8 +42,8 @@ static NSString * const cellID = @"cellID";
     
     pictureViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:cellID forIndexPath:indexPath];
     
-    cell.pictureName = self.allphotos[indexPath.item];
-//    cell.picturePath = self.allphotos[indexPath.item];
+//    cell.pictureName = self.allphotos[indexPath.item];
+    cell.picturePath = self.allphotos[indexPath.item];
     
     return  cell;
 }
@@ -81,8 +81,16 @@ static NSString * const cellID = @"cellID";
 - (NSArray *)allphotos
 {
     if (!_allphotos) {
-        _allphotos = @[@"1", @"2", @"3", @"4", @"5"];
-//        _allphotos = @[@"http://img3.duitang.com/uploads/item/201608/06/20160806091136_253BA.jpeg", @"http://pic.58pic.com/58pic/13/12/24/21E58PICfx8_1024.jpg", @"http://imgwww.heiguang.net/uploadfile/2014/0819/20140819115116482.jpg", @"http://img2.ph.126.net/T6OwzNcCb-PTV1kEkvbCnQ==/6597201708051956069.jpg", @"http://img.pconline.com.cn/images/upload/upc/tx/photoblog/1410/21/c4/39944979_39944979_1413878416125_mthumb.jpg",@"http://image92.360doc.com/DownloadImg/2015/12/1715/63143393_2.jpg"];
+//        _allphotos = @[@"1", @"2", @"3", @"4", @"5", @"3", @"4", @"5", @"3", @"4", @"5", @"3", @"4", @"5",@"1", @"2", @"3", @"4",@"1", @"2", @"3", @"4"];
+        _allphotos = @[@"https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1721563237,2528724214&fm=27&gp=0.jpg",
+                       @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1510990713315&di=57d6d33a514941e59a1c595f9db10f0b&imgtype=jpg&src=http%3A%2F%2Fimg2.imgtn.bdimg.com%2Fit%2Fu%3D1628726437%2C3204267472%26fm%3D214%26gp%3D0.jpg",
+                       @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1510990681912&di=3075ef5ba009b362cb77640a270c16fc&imgtype=0&src=http%3A%2F%2Fimg.pipa.com%2F480x270%2F201410%2F792%2F090040_16168492.jpg",
+                       @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1510990681911&di=54ed445c52de5dcd745a6ddd7aeca71b&imgtype=0&src=http%3A%2F%2Fdynamic-image.yesky.com%2F1080x-%2FuploadImages%2F2014%2F218%2F22%2F851518784627.jpg",
+                       @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1510990785347&di=e498ddd72d4a4bf12438de8f38c1352f&imgtype=jpg&src=http%3A%2F%2Fimg0.imgtn.bdimg.com%2Fit%2Fu%3D2115585170%2C1517063232%26fm%3D214%26gp%3D0.jpg",
+                       @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1510990812344&di=f405563da0d4a79df182d2a5b47c3814&imgtype=jpg&src=http%3A%2F%2Fimg1.imgtn.bdimg.com%2Fit%2Fu%3D1415486896%2C2483983468%26fm%3D214%26gp%3D0.jpg",
+                       @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1510990756912&di=263f3cca92993163e4b896b0a1291551&imgtype=0&src=http%3A%2F%2Fpic24.photophoto.cn%2F20120927%2F0036036871840141_b.jpg",
+                       @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1510990756910&di=25bf61f4a57343fb6ee69e85f439eae4&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081120%2F0036036821989873_b.jpg"
+                       ];
     }
     return _allphotos;
 }

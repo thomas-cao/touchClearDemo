@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF281AC11FBFF55F009A9B80 /* patternFinnal.png in Resources */ = {isa = PBXBuildFile; fileRef = CF281AC01FBFF55F009A9B80 /* patternFinnal.png */; };
 		CF36DB591E4C55AB00753AEA /* pictureViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CF36DB581E4C55AB00753AEA /* pictureViewCell.m */; };
 		CF5B46941E139DCB00881E71 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5B46931E139DCB00881E71 /* main.m */; };
 		CF5B46971E139DCB00881E71 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5B46961E139DCB00881E71 /* AppDelegate.m */; };
@@ -53,6 +54,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF281AC01FBFF55F009A9B80 /* patternFinnal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = patternFinnal.png; sourceTree = "<group>"; };
 		CF36DB571E4C55AB00753AEA /* pictureViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pictureViewCell.h; sourceTree = "<group>"; };
 		CF36DB581E4C55AB00753AEA /* pictureViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = pictureViewCell.m; sourceTree = "<group>"; };
 		CF5B468F1E139DCB00881E71 /* touchClearDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = touchClearDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -202,6 +204,7 @@
 		CF5B46C51E139DFC00881E71 /* HTtouchClear */ = {
 			isa = PBXGroup;
 			children = (
+				CF281AC01FBFF55F009A9B80 /* patternFinnal.png */,
 				CF5B46C61E139DFC00881E71 /* HTTouchClearView.h */,
 				CF5B46C71E139DFC00881E71 /* HTTouchClearView.m */,
 				CF5B46C81E139DFC00881E71 /* UIImage+Color.h */,
@@ -361,6 +364,7 @@
 			files = (
 				CF5B46A21E139DCB00881E71 /* LaunchScreen.storyboard in Resources */,
 				CF5B469F1E139DCB00881E71 /* Assets.xcassets in Resources */,
+				CF281AC11FBFF55F009A9B80 /* patternFinnal.png in Resources */,
 				CF5B469D1E139DCB00881E71 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
