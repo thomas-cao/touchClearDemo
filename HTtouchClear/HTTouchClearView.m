@@ -67,6 +67,9 @@ static NSInteger const touchSize = 150;
         [self.activityView stopAnimating];
         if (!error) {
             [self setImageBurl:image imageName:self.imageName imagePath:self.imageUrl radius:self.FuzzyDegree];
+        }else {
+            // 展示占位图 error
+            [self setImageBurl:[UIImage imageNamed:@"error"] imageName:@"error" imagePath:self.imageUrl radius:self.FuzzyDegree];
         }
     }];
 }

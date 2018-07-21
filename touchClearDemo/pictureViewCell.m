@@ -55,6 +55,7 @@
         _clearView = [HTTouchClearView clearView];
         _clearView.FuzzyDegree = 4.5;
         _clearView.ClearSize = CGSizeMake(180, 180);
+        _clearView.backgroundColor = [UIColor redColor];
         
     }
     return _clearView;
